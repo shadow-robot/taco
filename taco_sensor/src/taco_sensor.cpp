@@ -23,27 +23,88 @@
 
 #include "taco_sensor/taco_sensor.hpp"
 
-#include <sensor_msgs/PointCloud2.h>
-#include <sensor_msgs/Image.h>
-
 namespace taco_sensor
 {
+  const unsigned int TacoSensor::taco_width_const_ = 240;
+  const unsigned int TacoSensor::taco_height_const_ = 120;
+
   TacoSensor::TacoSensor()
     : node_handle_("~")
   {
-    foveated_publisher_ = node_handle_.advertise<sensor_msgs::PointCloud2>("foveated", 10);
+    //initialises our data variables
+    foveated_pcl_ = boost::shared_ptr<pcl::PointCloud<pcl::PointXYZI> >(new pcl::PointCloud<pcl::PointXYZI>());
+    unfoveated_pcl_ = boost::shared_ptr<pcl::PointCloud<pcl::PointXYZI> >(new pcl::PointCloud<pcl::PointXYZI>());
+    saliency_map_ = boost::shared_ptr<sensor_msgs::Image>(new sensor_msgs::Image());
 
-    unfoveated_publisher_ = node_handle_.advertise<sensor_msgs::PointCloud2>("unfoveated", 10);
+    init_pcl_(foveated_pcl_);
+    init_pcl_(unfoveated_pcl_);
+    saliency_map_->width = taco_width_const_;
+    saliency_map_->height = taco_height_const_;
+    saliency_map_->data.resize( taco_height_const_ * taco_width_const_ );
 
+    //initialises the ros publishers and services
+    foveated_publisher_ = node_handle_.advertise<pcl::PointCloud<pcl::PointXYZI> >("foveated", 10);
+    unfoveated_publisher_ = node_handle_.advertise<pcl::PointCloud<pcl::PointXYZI> >("unfoveated", 10);
     saliency_map_publisher_ = node_handle_.advertise<sensor_msgs::Image>("saliency_map", 10);
-
     reconfigure_sensor_ = node_handle_.advertiseService("reconfigure_sensor", &TacoSensor::reconfigure_sensor_callback, this);
+
+    /*
+     *TODO: I don't think it's working this way around:
+     * here I'm using a timer to have a regular callback and to fill in
+     * the data structures, but
+     * it'll probably be the TACO sensor pushing the data at its own rate
+     * in the real implementation.
+     */
+    data_timer_ = node_handle_.createTimer(ros::Duration(0.05), &TacoSensor::data_timer_callback, this);
   };
 
   TacoSensor::~TacoSensor()
   {
-
   };
+
+  void TacoSensor::data_timer_callback(const ros::TimerEvent&)
+  {
+    foveated_pcl_->header.stamp = ros::Time::now();
+    unfoveated_pcl_->header.stamp = ros::Time::now();
+    saliency_map_->header.stamp = ros::Time::now();
+
+    //Fill in the different pointers with dummy data
+    for(unsigned int i = 0; i < foveated_pcl_->points.size(); ++i)
+    {
+      foveated_pcl_->at(i).x = static_cast<double>(i);
+      foveated_pcl_->at(i).y = static_cast<double>(i);
+      foveated_pcl_->at(i).z = static_cast<double>(i);
+      foveated_pcl_->at(i).intensity = static_cast<double>(i);
+
+      unfoveated_pcl_->at(i).x = static_cast<double>(i) + 1.0;
+      unfoveated_pcl_->at(i).y = static_cast<double>(i) + 1.0;
+      unfoveated_pcl_->at(i).z = static_cast<double>(i) + 1.0;
+      unfoveated_pcl_->at(i).intensity = static_cast<double>(i) + 1.0;
+    }
+
+    for(unsigned int i = 0; i < saliency_map_->data.size(); ++i)
+    {
+      saliency_map_->data[i] = static_cast<double>(i);
+    }
+
+    //publish the data
+    publish_all_data_();
+  }
+
+  void TacoSensor::publish_all_data_()
+  {
+    foveated_publisher_.publish( *foveated_pcl_.get() );
+    unfoveated_publisher_.publish( *unfoveated_pcl_.get() );
+    saliency_map_publisher_.publish( *saliency_map_.get() );
+  }
+
+  void TacoSensor::init_pcl_( boost::shared_ptr<pcl::PointCloud<pcl::PointXYZI> > pcl )
+  {
+    pcl->width = taco_width_const_;
+    pcl->height = taco_height_const_;
+
+    pcl->points.resize( taco_width_const_ * taco_height_const_ );
+  }
 
   bool TacoSensor::reconfigure_sensor_callback(taco_msgs::TacoReconfigure::Request& request, taco_msgs::TacoReconfigure::Response& response)
   {
