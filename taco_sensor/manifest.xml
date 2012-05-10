@@ -1,0 +1,18 @@
+<package>
+  <description brief="taco_sensor">
+
+     taco_sensor
+
+  </description>
+  <author>Ugo Cupcic</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/taco_sensor</url>
+  <depend package="roscpp"/>
+  <depend package="std_msgs"/>
+  <depend package="sensor_msgs"/>
+  <depend package="taco_msgs"/>
+
+</package>
+
+

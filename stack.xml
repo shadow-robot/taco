@@ -1,0 +1,9 @@
+<stack>
+  <description brief="taco">taco</description>
+  <author>Maintained by Ugo Cupcic</author>
+  <license>BSD</license>  
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/taco</url>
+  <depend stack="ros" />
+
+</stack>
