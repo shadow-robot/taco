@@ -26,6 +26,9 @@
 #define _TACO_SENSOR_HPP_
 
 #include <ros/ros.h>
+#include <boost/smart_ptr.hpp>
+
+#include <taco_msgs/TacoReconfigure.h>
 
 namespace taco_sensor
 {
@@ -35,8 +38,29 @@ namespace taco_sensor
     TacoSensor();
     virtual ~TacoSensor();
 
+    /**
+     * The callback for the reconfigure sensor service.
+     *
+     * @param request the string to send to the sensor to reconfigure it
+     * @param response true if success
+     *
+     * @return true if success
+     */
+    bool reconfigure_sensor_callback(taco_msgs::TacoReconfigure::Request& request, taco_msgs::TacoReconfigure::Response& response);
+
   protected:
     ros::NodeHandle node_handle_;
+
+    ///Publishes the foveated data to a point cloud 2
+    ros::Publisher foveated_publisher_;
+    ///Publishes the unfoveated data to a point cloud 2
+    ros::Publisher unfoveated_publisher_;
+
+    ///Publishes the saliency map as an image
+    ros::Publisher saliency_map_publisher_;
+
+    ///A service server to reconfigure the sensor on the fly
+    ros::ServiceServer reconfigure_sensor_;
   };
 } // namespace
 

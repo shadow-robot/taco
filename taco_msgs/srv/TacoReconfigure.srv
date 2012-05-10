@@ -1,0 +1,3 @@
+string configure_command
+---
+bool success

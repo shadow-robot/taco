@@ -23,40 +23,19 @@
 
 #include "taco_sensor/taco_sensor.hpp"
 
-#include <sensor_msgs/PointCloud2.h>
-#include <sensor_msgs/Image.h>
+#include <boost/smart_ptr.hpp>
 
-namespace taco_sensor
+int main(int argc, char *argv[])
 {
-  TacoSensor::TacoSensor()
-    : node_handle_("~")
-  {
-    foveated_publisher_ = node_handle_.advertise<sensor_msgs::PointCloud2>("foveated", 10);
+  ros::init(argc, argv, "taco_sensor");
 
-    unfoveated_publisher_ = node_handle_.advertise<sensor_msgs::PointCloud2>("unfoveated", 10);
+  boost::shared_ptr<taco_sensor::TacoSensor> taco_sensor = boost::shared_ptr<taco_sensor::TacoSensor>(new taco_sensor::TacoSensor());
 
-    saliency_map_publisher_ = node_handle_.advertise<sensor_msgs::Image>("saliency_map", 10);
+  ros::spin();
 
-    reconfigure_sensor_ = node_handle_.advertiseService("reconfigure_sensor", &TacoSensor::reconfigure_sensor_callback, this);
-  };
+  return 0;
+}
 
-  TacoSensor::~TacoSensor()
-  {
-
-  };
-
-  bool TacoSensor::reconfigure_sensor_callback(taco_msgs::TacoReconfigure::Request& request, taco_msgs::TacoReconfigure::Response& response)
-  {
-    ROS_ERROR_STREAM(" Send me to port 12345 for TACO sensor: " << request.configure_command);
-
-    //TODO
-
-    response.success = true;
-
-    return true;
-  }
-
-} // namespace
 
 /* For the emacs weenies in the crowd.
 Local Variables:
