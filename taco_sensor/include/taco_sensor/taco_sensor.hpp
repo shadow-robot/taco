@@ -94,6 +94,9 @@ namespace taco_sensor
     ///const height for our point cloud and image
     static const unsigned int taco_height_const_;
 
+    ///The frame of reference for the taco sensor
+    static const std::string taco_reference_frame_const_;
+
     //TODO: remove this timer?
     ///A timer used to fill in the different pointers with dummy data
     ros::Timer data_timer_;

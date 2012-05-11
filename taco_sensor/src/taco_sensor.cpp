@@ -28,6 +28,8 @@ namespace taco_sensor
   const unsigned int TacoSensor::taco_width_const_ = 240;
   const unsigned int TacoSensor::taco_height_const_ = 120;
 
+  const std::string TacoSensor::taco_reference_frame_const_ = "taco";
+
   TacoSensor::TacoSensor()
     : node_handle_("~")
   {
@@ -41,6 +43,7 @@ namespace taco_sensor
     saliency_map_->width = taco_width_const_;
     saliency_map_->height = taco_height_const_;
     saliency_map_->data.resize( taco_height_const_ * taco_width_const_ );
+    saliency_map_->header.frame_id = taco_reference_frame_const_;
 
     //initialises the ros publishers and services
     foveated_publisher_ = node_handle_.advertise<pcl::PointCloud<pcl::PointXYZI> >("foveated", 10);
@@ -71,20 +74,20 @@ namespace taco_sensor
     //Fill in the different pointers with dummy data
     for(unsigned int i = 0; i < foveated_pcl_->points.size(); ++i)
     {
-      foveated_pcl_->at(i).x = static_cast<double>(i);
-      foveated_pcl_->at(i).y = static_cast<double>(i);
-      foveated_pcl_->at(i).z = static_cast<double>(i);
-      foveated_pcl_->at(i).intensity = static_cast<double>(i);
+      foveated_pcl_->points[i].x = static_cast<double>(i) / 100.0;
+      foveated_pcl_->points[i].y = static_cast<double>(i) / 100.0;
+      foveated_pcl_->points[i].z = static_cast<double>(i) / 100.0;
+      foveated_pcl_->points[i].intensity = 1.0;
 
-      unfoveated_pcl_->at(i).x = static_cast<double>(i) + 1.0;
-      unfoveated_pcl_->at(i).y = static_cast<double>(i) + 1.0;
-      unfoveated_pcl_->at(i).z = static_cast<double>(i) + 1.0;
-      unfoveated_pcl_->at(i).intensity = static_cast<double>(i) + 1.0;
+      unfoveated_pcl_->points[i].x = static_cast<double>(i * i) / 100.0;
+      unfoveated_pcl_->points[i].y = static_cast<double>(i * i) / 100.0;
+      unfoveated_pcl_->points[i].z = static_cast<double>(i * i) / 100.0;
+      unfoveated_pcl_->points[i].intensity = 1.0;
     }
 
     for(unsigned int i = 0; i < saliency_map_->data.size(); ++i)
     {
-      saliency_map_->data[i] = static_cast<double>(i);
+      saliency_map_->data[i] = static_cast<double>(i) / 50.0;
     }
 
     //publish the data
@@ -104,6 +107,8 @@ namespace taco_sensor
     pcl->height = taco_height_const_;
 
     pcl->points.resize( taco_width_const_ * taco_height_const_ );
+
+    pcl->header.frame_id = taco_reference_frame_const_;
   }
 
   bool TacoSensor::reconfigure_sensor_callback(taco_msgs::TacoReconfigure::Request& request, taco_msgs::TacoReconfigure::Response& response)

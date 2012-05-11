@@ -1,0 +1,6 @@
+<launch>
+  <node pkg="taco_sensor" type="taco_sensor" name="taco_sensor"/>
+
+  <node pkg="tf" type="static_transform_publisher" name="taco_frame_pub" args="0 0 0 0 0 0 fixed /taco 100" />
+
+</launch>
