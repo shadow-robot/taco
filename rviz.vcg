@@ -46,9 +46,6 @@ Grid.OffsetZ=0
 Grid.Plane=0
 Grid.Plane\ Cell\ Count=10
 Grid.Reference\ Frame=<Fixed Frame>
-Saliency.Enabled=1
-Saliency.Image\ Topic=/taco_sensor/saliency_map
-Saliency.Transport\ Hint=raw
 Unfoveated.Alpha=1
 Unfoveated.Billboard\ Size=0.01
 Unfoveated.Color\ Transformer=Flat Color
@@ -81,7 +78,7 @@ Tool\ 2D\ Nav\ GoalTopic=goal
 Tool\ 2D\ Pose\ EstimateTopic=initialpose
 Camera\ Type=rviz::OrbitViewController
 Camera\ Config=0.981 5.20399 1.2415 0 9.53674e-07 0
-Property\ Grid\ State=selection=;expanded=.Global Options,Saliency.Enabled;scrollpos=0,0;splitterpos=245,490;ispageselected=1
+Property\ Grid\ State=selection=;expanded=.Global Options;scrollpos=0,0;splitterpos=245,490;ispageselected=1
 [Display0]
 Name=Grid
 Package=rviz
@@ -94,7 +91,3 @@ ClassName=rviz::PointCloud2Display
 Name=Unfoveated
 Package=rviz
 ClassName=rviz::PointCloud2Display
-[Display3]
-Name=Saliency
-Package=rviz
-ClassName=rviz::ImageDisplay

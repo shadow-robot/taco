@@ -45,6 +45,9 @@ namespace taco_sensor
     saliency_map_->data.resize( taco_height_const_ * taco_width_const_ );
     saliency_map_->header.frame_id = taco_reference_frame_const_;
 
+    //we're using mono16 to give us some room for labelling etc... (change if needed)
+    saliency_map_->encoding = "mono16";
+
     //initialises the ros publishers and services
     foveated_publisher_ = node_handle_.advertise<pcl::PointCloud<pcl::PointXYZI> >("foveated", 10);
     unfoveated_publisher_ = node_handle_.advertise<pcl::PointCloud<pcl::PointXYZI> >("unfoveated", 10);
@@ -87,7 +90,7 @@ namespace taco_sensor
 
     for(unsigned int i = 0; i < saliency_map_->data.size(); ++i)
     {
-      saliency_map_->data[i] = static_cast<double>(i) / 50.0;
+      saliency_map_->data[i] = i;
     }
 
     //publish the data
