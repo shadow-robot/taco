@@ -22,6 +22,7 @@
  */
 
 #include "taco_sensor/taco_sensor.hpp"
+#include <sensor_msgs/image_encodings.h>
 
 namespace taco_sensor
 {
@@ -42,11 +43,13 @@ namespace taco_sensor
     init_pcl_(unfoveated_pcl_);
     saliency_map_->width = taco_width_const_;
     saliency_map_->height = taco_height_const_;
-    saliency_map_->data.resize( taco_height_const_ * taco_width_const_ );
     saliency_map_->header.frame_id = taco_reference_frame_const_;
 
-    //we're using mono16 to give us some room for labelling etc... (change if needed)
-    saliency_map_->encoding = "mono16";
+    //we're using mono8 as the saliency map can contain labels (change if needed)
+    saliency_map_->encoding = sensor_msgs::image_encodings::MONO8;
+    saliency_map_->step = taco_width_const_; // * 1 as using mono
+    saliency_map_->data.resize( taco_height_const_ * saliency_map_->step );
+
 
     //initialises the ros publishers and services
     foveated_publisher_ = node_handle_.advertise<pcl::PointCloud<pcl::PointXYZI> >("foveated", 10);

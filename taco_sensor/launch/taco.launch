@@ -3,8 +3,4 @@
 
   <node pkg="tf" type="static_transform_publisher" name="taco_frame_pub" args="0 0 0 0 0 0 fixed /taco 100" />
 
-  <node pkg="image_view" type="image_view" name="image_view">
-    <remap from="image" to="/taco_sensor/saliency_map"/>
-  </node>
-
 </launch>
