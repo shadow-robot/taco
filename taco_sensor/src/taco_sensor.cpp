@@ -38,6 +38,7 @@ namespace taco_sensor
     foveated_pcl_ = boost::shared_ptr<pcl::PointCloud<pcl::PointXYZI> >(new pcl::PointCloud<pcl::PointXYZI>());
     unfoveated_pcl_ = boost::shared_ptr<pcl::PointCloud<pcl::PointXYZI> >(new pcl::PointCloud<pcl::PointXYZI>());
     saliency_map_ = boost::shared_ptr<sensor_msgs::Image>(new sensor_msgs::Image());
+    extracted_features_ = boost::shared_ptr<taco_msgs::Feature>(new taco_msgs::Feature());
 
     init_pcl_(foveated_pcl_);
     init_pcl_(unfoveated_pcl_);
@@ -55,6 +56,7 @@ namespace taco_sensor
     foveated_publisher_ = node_handle_.advertise<pcl::PointCloud<pcl::PointXYZI> >("foveated", 10);
     unfoveated_publisher_ = node_handle_.advertise<pcl::PointCloud<pcl::PointXYZI> >("unfoveated", 10);
     saliency_map_publisher_ = node_handle_.advertise<sensor_msgs::Image>("saliency_map", 10);
+    features_publisher_ = node_handle_.advertise<taco_msgs::Feature>("features", 10);
     reconfigure_sensor_ = node_handle_.advertiseService("reconfigure_sensor", &TacoSensor::reconfigure_sensor_callback, this);
 
     /*
@@ -91,10 +93,26 @@ namespace taco_sensor
       unfoveated_pcl_->points[i].intensity = 1.0;
     }
 
+    //the saliency map
     for(unsigned int i = 0; i < saliency_map_->data.size(); ++i)
     {
       saliency_map_->data[i] = i;
     }
+
+    /*
+     * the extracted features:
+     *  To add new features to the message, just edit
+     *  the taco_msgs/msg/Feature.msg file and add
+     *  whatever feature you can get (don't forget
+     *  to recompile the taco_msgs if you modify the msg)
+     */
+    extracted_features_->object_tracking_features.x = 1.0;
+    extracted_features_->object_tracking_features.y = 2.0;
+    extracted_features_->object_tracking_features.z = 3.0;
+
+    extracted_features_->object_detection_features.x = 1.0;
+    extracted_features_->object_detection_features.y = 2.0;
+    extracted_features_->object_detection_features.z = 3.0;
 
     //publish the data
     publish_all_data_();
@@ -105,6 +123,7 @@ namespace taco_sensor
     foveated_publisher_.publish( *foveated_pcl_.get() );
     unfoveated_publisher_.publish( *unfoveated_pcl_.get() );
     saliency_map_publisher_.publish( *saliency_map_.get() );
+    features_publisher_.publish( *extracted_features_.get() );
   }
 
   void TacoSensor::init_pcl_( boost::shared_ptr<pcl::PointCloud<pcl::PointXYZI> > pcl )

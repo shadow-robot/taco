@@ -1,0 +1,2 @@
+geometry_msgs/Point object_tracking_features
+geometry_msgs/Point object_detection_features

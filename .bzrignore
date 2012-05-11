@@ -4,3 +4,4 @@ taco_msgs/src
 taco_msgs/srv_gen
 taco_sensor/bin
 taco_sensor/build
+taco_msgs/msg_gen

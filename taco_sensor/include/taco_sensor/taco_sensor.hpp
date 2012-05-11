@@ -29,6 +29,7 @@
 #include <boost/smart_ptr.hpp>
 
 #include <taco_msgs/TacoReconfigure.h>
+#include <taco_msgs/Feature.h>
 
 #include <pcl/point_types.h>
 #include <pcl_ros/point_cloud.h>
@@ -67,6 +68,8 @@ namespace taco_sensor
     ros::Publisher unfoveated_publisher_;
     ///Publishes the saliency map as an image
     ros::Publisher saliency_map_publisher_;
+    ///Publishes the features computed in the TACO sensor
+    ros::Publisher features_publisher_;
 
     ///A service server to reconfigure the sensor on the fly
     ros::ServiceServer reconfigure_sensor_;
@@ -80,6 +83,8 @@ namespace taco_sensor
     boost::shared_ptr<pcl::PointCloud<pcl::PointXYZI> > unfoveated_pcl_;
     ///Pointer to the saliency map
     boost::shared_ptr<sensor_msgs::Image> saliency_map_;
+    ///Pointer to the extracted features
+    boost::shared_ptr<taco_msgs::Feature> extracted_features_;
 
     /**
      * Initialises the given pcl with 0s.
